@@ -31,14 +31,16 @@ class DatabaseConnectionPool(object):
     maxsize = None
     conn_idle_timeout = None
     conn_wait_timeout = None
+    on_release_discard_all = None
 
-    def __init__(self, maxsize, conn_idle_timeout, conn_wait_timeout):
+    def __init__(self, maxsize, conn_idle_timeout, conn_wait_timeout, on_release_discard_all):
         if not isinstance(maxsize, integer_types):
             raise TypeError('Expected integer, got %r' % (maxsize,))
 
         self.maxsize = maxsize
         self.conn_idle_timeout = conn_idle_timeout
         self.conn_wait_timeout = conn_wait_timeout
+        self.on_release_discard_all = on_release_discard_all
 
         self.pool = queue.Queue(maxsize=maxsize)
         self.used_conns = {}
@@ -76,6 +78,8 @@ class DatabaseConnectionPool(object):
 
     def put(self, item):
         try:
+            if self.on_release_discard_all:
+                self.clear_state(item)
             self.pool.put(item, timeout=2)
             self.conn_gc()
         except queue.Full:
@@ -94,16 +98,19 @@ class DatabaseConnectionPool(object):
                 expired = int(now - last_used) >= self.conn_idle_timeout
                 if expired:
                     conn = self.pool.get(conn_id)
-                    conn.close()
-                    self.size -= 1
+                    if conn:
+                        conn.close()
+                        del self.used_conns[id(conn)]
+                        self.size -= 1
             except:
-                pass
+                continue
 
     def closeall(self):
         while not self.pool.empty():
             conn = self.pool.get_nowait()
             try:
                 conn.close()
+                del self.used_conns[id(conn)]
             except:
                 pass
         self.size = 0
@@ -116,12 +123,13 @@ class PostgresConnectionPool(DatabaseConnectionPool):
         maxsize = kwargs.pop('MAX_CONNS', 5)
         conn_idle_timeout = kwargs.pop('CONN_IDLE_TIMEOUT', 180)
         conn_wait_timeout = kwargs.pop('CONN_WAIT_TIMEOUT', 15)
+        on_release_discard_all = kwargs.pop('ON_RELEASE_DISCARD_ALL', False)
 
         self.args = args
         self.kwargs = kwargs
         DatabaseConnectionPool.__init__(
             self, maxsize, conn_idle_timeout,
-            conn_wait_timeout
+            conn_wait_timeout, on_release_discard_all
         )
 
     def create_connection(self):
@@ -132,4 +140,7 @@ class PostgresConnectionPool(DatabaseConnectionPool):
 
     def check_usable(self, connection):
         connection.cursor().execute('SELECT 1')
+
+    def clear_state(self, connection):
+        connection.cursor().execute('DISCARD ALL')
 

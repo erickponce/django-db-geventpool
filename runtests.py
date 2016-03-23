@@ -43,7 +43,8 @@ else:
                 'ATOMIC_REQUESTS': False,
                 'CONN_MAX_AGE': 0,
                 'OPTIONS': {
-                    'MAX_CONNS': 5
+                    'MAX_CONNS': 5,
+                    'ON_RELEASE_DISCARD_ALL': True
                 }
             }
         },

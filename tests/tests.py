@@ -33,3 +33,5 @@ class ModelTest(TestCase):
             greenlets.append(gevent.spawn(test_multiple_connections, x))
         gevent.joinall(greenlets)
 
+        # for i in range(0, 5):
+        #     gevent.sleep(1)

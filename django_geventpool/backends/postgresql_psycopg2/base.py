@@ -169,6 +169,8 @@ class DatabaseWrapperMixin16(object):
             conn_params['CONN_IDLE_TIMEOUT'] = self.settings_dict['OPTIONS']['CONN_IDLE_TIMEOUT']
         if 'CONN_WAIT_TIMEOUT' in self.settings_dict['OPTIONS']:
             conn_params['CONN_WAIT_TIMEOUT'] = self.settings_dict['OPTIONS']['CONN_WAIT_TIMEOUT']
+        if 'ON_RELEASE_DISCARD_ALL' in self.settings_dict['OPTIONS']:
+            conn_params['ON_RELEASE_DISCARD_ALL'] = self.settings_dict['OPTIONS']['ON_RELEASE_DISCARD_ALL']
         return conn_params
 
     def close(self):
