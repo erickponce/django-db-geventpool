@@ -1,4 +1,4 @@
-django-db-geventpool
+django-geventpool
 ====================
 
 .. image:: https://img.shields.io/pypi/v/django-db-geventpool.svg
