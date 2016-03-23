@@ -3,14 +3,14 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='django-db-geventpool',
-    version='1.20.1',
+    name='django-geventpool',
+    version='1.1.2',
     install_requires=[
         'django>=1.5',
         'psycopg2>=2.5.1',
         'psycogreen>=1.0'],
-    url='https://github.com/jneight/django-db-geventpool',
-    description='Add a DB connection pool using gevent to django',
+    url='https://github.com/erickponce/django-db-geventpool',
+    description='Add a DB connection pool using gevent to django (based on django-db-geventpool)',
     long_description=open("README.rst").read(),
     packages=find_packages(),
     include_package_data=True,
@@ -25,6 +25,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
     ],
-    author='Javier Cordero Martinez',
-    author_email='jcorderomartinez@gmail.com'
+    author='Erick Ponce Leão',
+    author_email='erickponceleao@gmail.com'
 )

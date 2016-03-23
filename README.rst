@@ -1,19 +1,15 @@
 django-db-geventpool
 ====================
 
-.. image:: http://img.shields.io/travis/jneight/django-db-geventpool.svg
-   :target: https://travis-ci.org/jneight/django-db-geventpool
-   :alt: travis
-
 .. image:: https://img.shields.io/pypi/v/django-db-geventpool.svg
-   :target: https://pypi.python.org/pypi/django-db-geventpool
+   :target: https://pypi.python.org/pypi/django-geventpool
    :alt: pypi version
 
 .. image:: http://img.shields.io/pypi/l/django-db-geventpool.svg
-   :target: https://pypi.python.org/pypi/django-db-geventpool
+   :target: https://github.com/erickponce/django-db-geventpool
    :alt: pypi license
 
-Another DB pool using gevent for PostgreSQL DB.
+Another DB pool using gevent for PostgreSQL DB (based on django-db-geventpool).
 
 *Need Django 1.5.x or newer (check settings for django >= 1.6)*
 
@@ -41,8 +37,8 @@ Settings
 
 
   + Set *ENGINE* in your database settings to: 
-      + *'django_db_geventpool.backends.postgresql_psycopg2'*
-      + For postgis: *'django_db_geventpool.backends.postgis'*
+      + *'django_geventpool.backends.postgresql_psycopg2'*
+      + For postgis: *'django_geventpool.backends.postgis'*
   + Add *MAX_CONNS* to *OPTIONS* to set the maximun number of connections allowed to database (default=4)
   + If using django 1.6 or newer, add *'CONN_MAX_AGE': 0* to settings to disable default django persistent connection feature. And read below note if you are manually spawning greenlets 
 
@@ -51,14 +47,16 @@ Settings
     # for django 1.5.x
     DATABASES = {
         'default': {
-            'ENGINE': 'django_db_geventpool.backends.postgresql_psycopg2',
+            'ENGINE': 'django_geventpool.backends.postgresql_psycopg2',
             'NAME': 'db',           # Or path to database file if using sqlite3.
             'USER': 'postgres',                      # Not used with sqlite3.
             'PASSWORD': 'postgres',                  # Not used with sqlite3.
             'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
             'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
             'OPTIONS': {
-                'MAX_CONNS': 20
+                'MAX_CONNS': 30, # Set max allowed connections
+                'CONN_IDLE_TIMEOUT': 60, # Set to auto close idling connections
+                'CONN_WAIT_TIMEOUT': 15 # Set timeout when waiting for connections
             }
         }
     }
@@ -66,7 +64,7 @@ Settings
     # for django 1.6 and newer version, CONN_MAX_AGE must be set to 0, or connections will never go back to the pool
     DATABASES = {
         'default': {
-            'ENGINE': 'django_db_geventpool.backends.postgresql_psycopg2',
+            'ENGINE': 'django_geventpool.backends.postgresql_psycopg2',
             'NAME': 'db',
             'USER': 'postgres',
             'PASSWORD': 'postgres',
@@ -75,7 +73,9 @@ Settings
             'ATOMIC_REQUESTS': False,
             'CONN_MAX_AGE': 0,
             'OPTIONS': {
-                'MAX_CONNS': 20
+                'MAX_CONNS': 30, # Set max allowed connections
+                'CONN_IDLE_TIMEOUT': 60, # Set to auto close idling connections
+                'CONN_WAIT_TIMEOUT': 15 # Set timeout when waiting for connections
             }
         }
     }

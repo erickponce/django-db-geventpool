@@ -25,7 +25,7 @@ from django.utils.encoding import force_str
 try:
     import psycopg2_pool as psypool
 except ImportError:
-    import django_db_geventpool.backends.postgresql_psycopg2.psycopg2_pool as psypool
+    import django_geventpool.backends.postgresql_psycopg2.psycopg2_pool as psypool
 from .creation import DatabaseCreation
 
 logger = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ class DatabaseWrapperMixin15(object):
         if self._pool is not None:
             return self._pool
         connection_pools_lock.acquire()
-        if not self.alias in connection_pools:
+        if self.alias not in connection_pools:
             self._pool = psypool.PostgresConnectionPool(
                 **self.get_connection_params())
             connection_pools[self.alias] = self._pool
@@ -116,6 +116,8 @@ class DatabaseWrapperMixin15(object):
                 self.pool.closeall()
                 self.connection = None
             else:
+                # if self.close_at is not None and time.time() >= self.close_at:
+                #     self.close()
                 self.pool.put(self.connection)
                 self.connection = None
         except:
@@ -145,9 +147,9 @@ class DatabaseWrapperMixin16(object):
         if self._pool is not None:
             return self._pool
         connection_pools_lock.acquire()
-        if not self.alias in connection_pools:
+        if self.alias not in connection_pools:
             self._pool = psypool.PostgresConnectionPool(
-                **self.get_connection_params())
+                **self.get_pool_params())
             connection_pools[self.alias] = self._pool
         else:
             self._pool = connection_pools[self.alias]
@@ -159,10 +161,14 @@ class DatabaseWrapperMixin16(object):
             self.connection = self.pool.get()
         return self.connection
 
-    def get_connection_params(self):
+    def get_pool_params(self):
         conn_params = super(DatabaseWrapperMixin16, self).get_connection_params()
         if 'MAX_CONNS' in self.settings_dict['OPTIONS']:
             conn_params['MAX_CONNS'] = self.settings_dict['OPTIONS']['MAX_CONNS']
+        if 'CONN_IDLE_TIMEOUT' in self.settings_dict['OPTIONS']:
+            conn_params['CONN_IDLE_TIMEOUT'] = self.settings_dict['OPTIONS']['CONN_IDLE_TIMEOUT']
+        if 'CONN_WAIT_TIMEOUT' in self.settings_dict['OPTIONS']:
+            conn_params['CONN_WAIT_TIMEOUT'] = self.settings_dict['OPTIONS']['CONN_WAIT_TIMEOUT']
         return conn_params
 
     def close(self):
@@ -189,6 +195,10 @@ class DatabaseWrapperMixin16(object):
             self.pool.closeall()
         else:
             with self.wrap_database_errors:
+                # if self.close_at is not None and time.time() >= self.close_at:
+                #     cursor = self.cursor()
+                #     cursor.close()
+                # else:
                 self.pool.put(self.connection)
         self.connection = None
 

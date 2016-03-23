@@ -1,4 +1,4 @@
 include LICENSE AUTHORS.rst README.rst
-recursive-include django-db-geventpool *
+recursive-include django-geventpool *
 recursive-exclude * *.pyc *.swp
-prune django_db_geventpoll/.ropeproject
+prune django_geventpoll/.ropeproject

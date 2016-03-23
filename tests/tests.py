@@ -6,7 +6,7 @@ from django.utils.unittest import TestCase
 
 from .models import TestModel
 
-from django_db_geventpool.utils import close_connection
+from django_geventpool.utils import close_connection
 
 
 @close_connection
@@ -19,7 +19,6 @@ def test_multiple_connections(count):
 
 class ModelTest(TestCase):
     def test_model_save(self):
-
         data = 'testing save'
         obj = TestModel.objects.create(data=data)
 
@@ -30,6 +29,7 @@ class ModelTest(TestCase):
         TestModel.objects.create(data='test')
         greenlets = []
 
-        for x in range(0, 50):
+        for x in range(0, 5):
             greenlets.append(gevent.spawn(test_multiple_connections, x))
         gevent.joinall(greenlets)
+

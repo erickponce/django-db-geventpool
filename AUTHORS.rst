@@ -1,2 +1,1 @@
-Javier Cordero / jneight <https://github.com/jneight>
-Rajiv Makhijani / rajivm <http://github.com/rajivm>
+Erick Ponce Leão / erickponce <https://github.com/erickponce>
