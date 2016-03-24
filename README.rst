@@ -56,7 +56,8 @@ Settings
             'OPTIONS': {
                 'MAX_CONNS': 30, # Set max allowed connections
                 'CONN_IDLE_TIMEOUT': 60, # Set to auto close idling connections
-                'CONN_WAIT_TIMEOUT': 15 # Set timeout when waiting for connections
+                'CONN_WAIT_TIMEOUT': 15, # Set timeout when waiting for connections
+                'ON_RELEASE_DISCARD_ALL': False # Set True to run DISCARD_ALL when releasing connections
             }
         }
     }
@@ -75,7 +76,8 @@ Settings
             'OPTIONS': {
                 'MAX_CONNS': 30, # Set max allowed connections
                 'CONN_IDLE_TIMEOUT': 60, # Set to auto close idling connections
-                'CONN_WAIT_TIMEOUT': 15 # Set timeout when waiting for connections
+                'CONN_WAIT_TIMEOUT': 15, # Set timeout when waiting for connections
+                'ON_RELEASE_DISCARD_ALL': False # Set True to run DISCARD_ALL when releasing connections
             }
         }
     }

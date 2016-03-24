@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-geventpool',
-    version='1.2.1',
+    version='1.2.2',
     install_requires=[
         'django>=1.5',
         'psycopg2>=2.5.1',
